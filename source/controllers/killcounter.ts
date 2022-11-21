@@ -1,7 +1,5 @@
 /** source/controllers/posts.ts */
 import { Request, Response, NextFunction } from 'express';
-import axios, { AxiosResponse } from 'axios';
- 
 interface Player {
     name: String;
 }
@@ -11,7 +9,7 @@ const weekly_flush = async (req: Request, res: Response, next: NextFunction) => 
     // get some posts
     // @ts-ignore
     const flush = "weekly-leaderboards";
- 
+
     return res.status(200).json({
         message: "DONE"
     });
@@ -21,11 +19,11 @@ const weekly_flush = async (req: Request, res: Response, next: NextFunction) => 
 const update_kills = async (req: Request, res: Response, next: NextFunction) => {
     // get the user id from the req
 
- 
+
     const cached2 = "weekly-leaderboards";
     return res.status(200).json({
         message: cached2
     });
 };
 
-export default { weekly_flush, update_kills  };
+export default { weekly_flush, update_kills };

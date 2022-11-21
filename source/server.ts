@@ -57,7 +57,6 @@ routes.forEach((route) => {
     router.use(require("./routes/" + route));
 });
 
-
 /**Error handling */
 router.use((req, res, next) => {
     const error = new Error("not found");
