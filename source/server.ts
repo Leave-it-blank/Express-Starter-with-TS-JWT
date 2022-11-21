@@ -4,11 +4,15 @@ import http from "http";
 import morgan from "morgan";
 require("dotenv").config();
 const helmet = require("helmet");
+var cors = require('cors')
 // @ts-ignore
 var fs = require('fs');
 const jwt = require("jsonwebtoken");
 const router: Express = express();
+//security headers
 router.use(helmet());
+//cross orgin resource sharing
+router.use(cors());
 /** Logging */
 router.use(morgan("dev"));
 /** Parse the request */
