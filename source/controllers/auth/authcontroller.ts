@@ -1,8 +1,12 @@
 /** source/controllers/posts.ts */
 import { doesNotMatch } from 'assert';
 import { Request, Response, NextFunction } from 'express';
+const accessTokenSecret = 'youraccesstokensecret';
+const refreshTokenSecret = 'yourrefreshtokensecrethere';
+let refreshTokens: any[] = [];
 //ts-ignore
 import { PrismaClient } from '@prisma/client';
+const jwt = require("jsonwebtoken");
 var crypto = require("crypto");
 const bcrypt = require("bcrypt")
 var salt = "a0we221q3$@#dad#"   // salt for hashing password
@@ -32,9 +36,13 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         //console.log(verify + "verify");
 
         if (verify) {
+            const accessToken = jwt.sign({ username: user.username, api: user["api_key"] }, accessTokenSecret, { expiresIn: '20m' });
+            const refreshToken = jwt.sign({ username: user.username, api: user["api_key"] }, refreshTokenSecret);
 
+            refreshTokens.push(refreshToken);
             return res.status(200).json({
-                message: "Logged in!"
+                accessToken,
+                refreshToken
             });
         }
         return res.status(404).json({
@@ -92,4 +100,49 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-export default { login, signup };
+
+//@ts-ignore
+const refreshToken = (req: Request, res: Response, next: NextFunction) => {
+
+    const authHeader = req.headers['authorization'];
+    //ts-ignore
+    const token: String = typeof (authHeader) != "undefined" ? authHeader?.split(' ')[1] : "";
+    console.log(typeof (token))
+
+    if (!token) {
+        return res.sendStatus(401);
+    }
+    if (!refreshTokens.includes(token)) {
+        return res.sendStatus(403);
+    }
+
+    jwt.verify(token, refreshTokenSecret, (err: any, user: { username: any; role: any; }) => {
+        if (err) {
+            return res.sendStatus(403);
+        }
+
+        const accessToken = jwt.sign({ username: user.username, role: user.role }, accessTokenSecret, { expiresIn: '20m' });
+
+        return res.json({
+            accessToken
+        });
+    });
+}
+
+//@ts-ignore
+const logout = (req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers['authorization'];
+    //ts-ignore
+
+    const token: String = typeof (authHeader) != "undefined" ? authHeader?.split(' ')[1] : "";
+    console.log(typeof (token))
+    console.log(token);
+    refreshTokens.splice(refreshTokens.indexOf(token), 1); // remove token from array
+    console.log(refreshTokens);
+
+    console.log(refreshTokens);
+    res.send("Logout successful");
+}
+
+
+export default { login, signup, refreshToken, logout }; 
