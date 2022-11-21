@@ -78,14 +78,13 @@ httpServer.listen(PORT, () =>
     console.log(`The server is running on port ${PORT}`)
 );
 
-
+/** Cron Jobs */
 //@ts-ignore
 //const cron = require("node-cron");
 //const fetch = require("node-fetch");
-
 // cron.schedule('0 8 * * 1',
-//     () => {  fetch('http://localhost:6060/flush_kills').then(() =>{
+//     () => {  fetch('http://localhost:3000/test1').then(() =>{
 //             console.log("Task is running every monday 8 am " + new Date())
 //     });
-//         console.log("LeaderBoard is Wiped Now  " + new Date());
+//         console.log(new Date());
 //     });
