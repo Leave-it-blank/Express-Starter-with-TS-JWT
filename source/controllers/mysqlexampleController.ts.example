@@ -21,7 +21,7 @@ const mysql_example = async (req: Request, res: Response, next: NextFunction) =>
         const users = await prisma.user.findMany()
         console.log(users)
 
-        
+
     }
 
     main()
