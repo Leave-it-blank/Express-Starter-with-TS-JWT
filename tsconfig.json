@@ -1,0 +1,17 @@
+{
+
+  "compilerOptions": {
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "outDir": "./build",
+    "rootDir": "./source",
+    "target": "es6",
+    "skipLibCheck": true,
+    "strict": true
+},
+  "exclude": [
+    "node_modules"
+  ]
+}
