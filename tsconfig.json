@@ -1,15 +1,24 @@
-{   
+// Good
+{
+  "compileOnSave": true,
   "compilerOptions": {
+    "outDir": "./built",
     "allowJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "outDir": "./build",
-    "rootDir": "./source",
-    "target": "es6",
+    "strict": true,
     "skipLibCheck": true,
-    "strict": true
+    "esModuleInterop": true,
+    "target": "es6",
+    "allowUnreachableCode": false,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "typeRoots": ["./typings"],
+    "outFile": "./built/combined.js"
   },
-  "exclude": ["node_modules"]
-    
+  "include": ["./**/*"],
+  "exclude": [
+    "./plugins/**/*",
+    "./typings/**/*",
+    "node_modules",
+    "./built/**/*" // This is what fixed it!
+  ]
 }

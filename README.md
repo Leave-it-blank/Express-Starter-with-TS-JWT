@@ -1,1 +1,1 @@
-# Rest Api For Management of comics
+# Node Template for Creating Rest API Client APPLication Protocol

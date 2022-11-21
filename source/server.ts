@@ -1,14 +1,7 @@
-/** source/server.ts */
-// @ts-ignore
-import http from "http";
-// @ts-ignore
+/** @ts-ignore source/server.ts */
 import express, { Express } from "express";
-// @ts-ignore
+import http from "http";
 import morgan from "morgan";
-import { isAwaitExpression } from "typescript";
-import { watchFile } from "fs";
-const cron = require("node-cron");
-const fetch = require("node-fetch");
 require("dotenv").config();
 // @ts-ignore
 
@@ -38,7 +31,7 @@ router.use((req, res, next) => {
     next();
 });
 
-/** Routes */
+/**Load Routes */
 var routes: string[] = [];
 var fs = require('fs');
 
@@ -65,7 +58,7 @@ routes.forEach((route) => {
 });
 
 
-/**@ts-ignore Error handling */
+/**Error handling */
 router.use((req, res, next) => {
     const error = new Error("not found");
     return res.status(404).json({
@@ -75,12 +68,15 @@ router.use((req, res, next) => {
 
 /** Server */
 const httpServer = http.createServer(router);
-
 const PORT: any = process.env.PORT ?? 6060;
 httpServer.listen(PORT, () =>
     console.log(`The server is running on port ${PORT}`)
 );
+
+
 //@ts-ignore
+//const cron = require("node-cron");
+//const fetch = require("node-fetch");
 
 // cron.schedule('0 8 * * 1',
 //     () => {  fetch('http://localhost:6060/flush_kills').then(() =>{
