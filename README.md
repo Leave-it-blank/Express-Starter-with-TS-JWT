@@ -1,6 +1,7 @@
 # Express API Starter
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 How to use this template:
 
     ![alt text](https://github.com/Leave-it-blank/Express-Starter-with-TypeScript--Node--Redis--DotEnv/documentation/images/howtouse.jpg?raw=true)
