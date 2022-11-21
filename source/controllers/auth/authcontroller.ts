@@ -1,15 +1,15 @@
 /** source/controllers/posts.ts */
 import { doesNotMatch } from 'assert';
 import { Request, Response, NextFunction } from 'express';
+//ts-ignore
+import { PrismaClient } from '@prisma/client';
+var crypto = require("crypto");
 const bcrypt = require("bcrypt")
-var user: any[] = [];
 var salt = "a0we221q3$@#dad#"   // salt for hashing password
-var user_api = {};
 async function hashPassword(plaintextPassword: any) {
     const hash = await bcrypt.hash(plaintextPassword + salt, 10);
     return hash;
 }
-
 // compare password
 async function comparePassword(plaintextPassword: any, hash: any) {
     const result = await bcrypt.compare(plaintextPassword + salt, hash);
@@ -18,50 +18,74 @@ async function comparePassword(plaintextPassword: any, hash: any) {
 // getting all posts
 const login = async (req: Request, res: Response, next: NextFunction) => {
     var found = false, verify = false;
-    var user_data: any = [];
-    console.log(user);
     var data: any = {};
-    console.log(req.body);
-
     data["name"] = req.body.username.toLowerCase();
+    const prisma = new PrismaClient()
+    async function main() {
+        const user = await prisma.user.findUniqueOrThrow({
+            where: {
+                username: data["name"],
+            },
+        })
+        console.log(user)
+        verify = await comparePassword(req.body.password, user["password"]);
+        //console.log(verify + "verify");
 
-    user.forEach((element: any) => {
-        if (element[0] == data["name"]) {
-            console.log(element);
-            console.log(data["name"]);
-            found = true;
-            user_data = element;
-            console.log(user_data[2]);
+        if (verify) {
+
+            return res.status(200).json({
+                message: "Logged in!"
+            });
         }
-    });
-    if (found) {
-        verify = await comparePassword(req.body.password, user_data[2]);
-        console.log(verify);
-
-    }
-    if (verify) {
-
-        return res.status(200).json({
-            message: "Logged in"
+        return res.status(404).json({
+            message: "Wrong Credentials."
         });
+
     }
-    return res.status(404).json({
-        message: "User Not Found"
-    });
+
+    main()
+        .then(async () => {
+            await prisma.$disconnect()
+        })
+        .catch(async (e) => {
+            console.error(e)
+            await prisma.$disconnect()
+            process.exit(1)
+        })
+
+
 };
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
-
     var data: any = {};
-    console.log(req.body);
-
+    //console.log(req.body);
     data["name"] = req.body.username.toLowerCase();
     data["email"] = req.body.email.toLowerCase();
     data["password"] = await hashPassword(req.body.password);
-    console.log(data);
+    data["api_key"] = crypto.randomBytes(20).toString('hex');
+    const prisma = new PrismaClient()
+    async function main() {
+        const user = await prisma.user.create({
+            data: {
+                username: data["name"],
+                email: data["email"],
+                password: data["password"],
+                api_key: data["api_key"]
+            },
+        })
+        //console.log(user)
+    }
 
-    user.push([data["name"], data["email"], data["password"]]);
-    console.log(user);
+    main()
+        .then(async () => {
+            await prisma.$disconnect()
+        })
+        .catch(async (e) => {
+            console.error(e)
+            await prisma.$disconnect()
+            process.exit(1)
+        })
+
 
     return res.status(200).json({
         message: "Registered"
