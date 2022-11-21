@@ -46,6 +46,16 @@ fs.readdirSync(__dirname + '/routes').forEach(function (file: string) {
     if (file.substr(file.lastIndexOf('.') + 1) === 'ts') {
         var name = file.substr(0, file.indexOf('.'));
         routes.push(name);
+        return;
+    }
+    var stat = fs.lstatSync(__dirname + '/routes' + '/' + file);
+    if (stat.isDirectory()) {
+        fs.readdirSync(__dirname + '/routes/' + file).forEach(function (file_2: string) {
+            if (file_2.substr(file_2.lastIndexOf('.') + 1) === 'ts') {
+                var name = file_2.substr(0, file_2.indexOf('.'));
+                routes.push(file + "/" + name);
+            }
+        });
     }
 });
 console.log("Current Routes Controllers are: " + routes);
@@ -53,8 +63,6 @@ console.log("Current Routes Controllers are: " + routes);
 routes.forEach((route) => {
     router.use(require("./routes/" + route));
 });
-
-
 
 
 /**@ts-ignore Error handling */

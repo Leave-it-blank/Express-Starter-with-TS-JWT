@@ -1,5 +1,4 @@
-{
-
+{   
   "compilerOptions": {
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
@@ -10,8 +9,7 @@
     "target": "es6",
     "skipLibCheck": true,
     "strict": true
-},
-  "exclude": [
-    "node_modules"
-  ]
+  },
+  "exclude": ["node_modules"]
+    
 }
