@@ -4,7 +4,8 @@ import http from "http";
 import morgan from "morgan";
 require("dotenv").config();
 // @ts-ignore
-
+var fs = require('fs');
+const jwt = require("jsonwebtoken");
 const router: Express = express();
 
 /** Logging */
@@ -33,7 +34,6 @@ router.use((req, res, next) => {
 
 /**Load Routes */
 var routes: string[] = [];
-var fs = require('fs');
 
 fs.readdirSync(__dirname + '/routes').forEach(function (file: string) {
     if (file.substr(file.lastIndexOf('.') + 1) === 'ts') {
