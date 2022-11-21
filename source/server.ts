@@ -4,9 +4,9 @@ import http from "http";
 import morgan from "morgan";
 require("dotenv").config();
 const helmet = require("helmet");
-var cors = require('cors')
+const cors = require('cors')
 // @ts-ignore
-var fs = require('fs');
+const fs = require('fs');
 const jwt = require("jsonwebtoken");
 const router: Express = express();
 //security headers
@@ -56,6 +56,7 @@ fs.readdirSync(__dirname + '/routes').forEach(function (file: string) {
         });
     }
 });
+
 console.log("Current Routes Controllers are: " + routes);
 
 routes.forEach((route) => {
@@ -72,7 +73,7 @@ router.use((req, res, next) => {
 
 /** Server */
 const httpServer = http.createServer(router);
-const PORT: any = process.env.PORT ?? 6060;
+const PORT: any = process.env.PORT ?? 3000;
 httpServer.listen(PORT, () =>
     console.log(`The server is running on port ${PORT}`)
 );

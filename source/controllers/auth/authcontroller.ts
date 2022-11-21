@@ -1,15 +1,32 @@
 /** source/controllers/posts.ts */
-import { doesNotMatch } from 'assert';
 import { Request, Response, NextFunction } from 'express';
-const accessTokenSecret = 'youraccesstokensecret';
-const refreshTokenSecret = 'yourrefreshtokensecrethere';
-let refreshTokens: any[] = [];
-//ts-ignore
 import { PrismaClient } from '@prisma/client';
+
+const Redis = require('ioredis');
+const fs = require('fs');
+const accessTokenSecret = process.env.JWTSECRET;
+const refreshTokenSecret = process.env.JWTREFRESH_SECRET;
+const salt = process.env.SALT_PASS; // salt for hashing password
 const jwt = require("jsonwebtoken");
-var crypto = require("crypto");
+const crypto = require("crypto");
 const bcrypt = require("bcrypt")
-var salt = "a0we221q3$@#dad#"   // salt for hashing password
+
+const ioredis = new Redis({
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
+});
+async function cacheRefreshToken(refreshToken: String) {
+    await ioredis.sadd("refreshTokens", refreshToken);
+}
+async function removeCacheAccessToken(refreshToken: String) {
+    const d = await ioredis.srem("refreshTokens", refreshToken);
+
+    return d;
+}
+async function checkCacheAccessToken(refreshToken: String) {
+    return await ioredis.sismember("refreshTokens", refreshToken);
+}
 async function hashPassword(plaintextPassword: any) {
     const hash = await bcrypt.hash(plaintextPassword + salt, 10);
     return hash;
@@ -21,7 +38,7 @@ async function comparePassword(plaintextPassword: any, hash: any) {
 }
 // getting all posts
 const login = async (req: Request, res: Response, next: NextFunction) => {
-    var found = false, verify = false;
+    var verify = false;
     var data: any = {};
     data["name"] = req.body.username.toLowerCase();
     const prisma = new PrismaClient()
@@ -31,15 +48,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
                 username: data["name"],
             },
         })
-        console.log(user)
         verify = await comparePassword(req.body.password, user["password"]);
-        //console.log(verify + "verify");
-
         if (verify) {
-            const accessToken = jwt.sign({ username: user.username, api: user["api_key"] }, accessTokenSecret, { expiresIn: '20m' });
-            const refreshToken = jwt.sign({ username: user.username, api: user["api_key"] }, refreshTokenSecret);
+            const accessToken = jwt.sign({ username: user.username, apikey: user["api_key"] }, accessTokenSecret, { expiresIn: '20m' });
+            const refreshToken = jwt.sign({ username: user.username, apikey: user["api_key"] }, refreshTokenSecret);
+            cacheRefreshToken(refreshToken);
 
-            refreshTokens.push(refreshToken);
             return res.status(200).json({
                 accessToken,
                 refreshToken
@@ -66,7 +80,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
     var data: any = {};
-    //console.log(req.body);
     data["name"] = req.body.username.toLowerCase();
     data["email"] = req.body.email.toLowerCase();
     data["password"] = await hashPassword(req.body.password);
@@ -81,7 +94,6 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
                 api_key: data["api_key"]
             },
         })
-        //console.log(user)
     }
 
     main()
@@ -102,26 +114,23 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 
 
 //@ts-ignore
-const refreshToken = (req: Request, res: Response, next: NextFunction) => {
+const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
 
     const authHeader = req.headers['authorization'];
     //ts-ignore
     const token: String = typeof (authHeader) != "undefined" ? authHeader?.split(' ')[1] : "";
-    console.log(typeof (token))
-
     if (!token) {
         return res.sendStatus(401);
     }
-    if (!refreshTokens.includes(token)) {
+    if (!await checkCacheAccessToken(token)) {
         return res.sendStatus(403);
     }
-
-    jwt.verify(token, refreshTokenSecret, (err: any, user: { username: any; role: any; }) => {
+    jwt.verify(token, refreshTokenSecret, (err: any, user: { username: any; api_key: any; }) => {
         if (err) {
             return res.sendStatus(403);
         }
 
-        const accessToken = jwt.sign({ username: user.username, role: user.role }, accessTokenSecret, { expiresIn: '20m' });
+        const accessToken = jwt.sign({ username: user.username, apikey: user.api_key }, accessTokenSecret, { expiresIn: '20m' });
 
         return res.json({
             accessToken
@@ -131,17 +140,13 @@ const refreshToken = (req: Request, res: Response, next: NextFunction) => {
 
 //@ts-ignore
 const logout = (req: Request, res: Response, next: NextFunction) => {
+
     const authHeader = req.headers['authorization'];
     //ts-ignore
-
-    const token: String = typeof (authHeader) != "undefined" ? authHeader?.split(' ')[1] : "";
-    console.log(typeof (token))
-    console.log(token);
-    refreshTokens.splice(refreshTokens.indexOf(token), 1); // remove token from array
-    console.log(refreshTokens);
-
-    console.log(refreshTokens);
+    const token: String = typeof (authHeader) != "undefined" ? authHeader.split(' ')[1] : "";
+    removeCacheAccessToken(token);
     res.send("Logout successful");
+
 }
 
 
