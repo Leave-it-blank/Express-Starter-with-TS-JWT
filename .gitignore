@@ -2,6 +2,7 @@
 node_modules
 # Dependency directories
 node_modules/
+builds/
 data/
 jspm_packages/
 errors.log.*
