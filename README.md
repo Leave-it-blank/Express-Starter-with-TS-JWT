@@ -3,9 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 How to use this template:
-[documentation/images/howtouse.jpg](https://github.com/Leave-it-blank/Express-Starter-with-TS/blob/master/documentation/images/howtouse.jpg)
-    <img src="[documentation/images/howtouse.jpg](https://github.com/Leave-it-blank/Express-Starter-with-TS/blob/master/documentation/images/howtouse.jpg)"/>
-    <img src="https://github.com/Leave-it-blank/Express-Starter-with-TS/blob/master/documentation/images/howtouse.jpg"/>
+  <img src="https://github.com/Leave-it-blank/Express-Starter-with-TS/blob/master/documentation/images/howtouse.jpg"/>
 
 Includes API Server utilities:
 
