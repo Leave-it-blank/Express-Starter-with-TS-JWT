@@ -3,7 +3,7 @@ node_modules
 # Dependency directories
 node_modules/
 jspm_packages/
-
+errors.log.*
 # TypeScript v1 declaration files
 typings/
 

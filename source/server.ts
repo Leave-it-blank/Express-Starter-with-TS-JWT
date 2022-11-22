@@ -5,6 +5,7 @@ import morgan from "morgan";
 require("dotenv").config();
 const helmet = require("helmet");
 const cors = require('cors')
+const rt = require("file-stream-rotator")
 // @ts-ignore
 const fs = require('fs');
 const jwt = require("jsonwebtoken");
@@ -15,6 +16,19 @@ router.use(helmet());
 router.use(cors());
 /** Logging */
 router.use(morgan("dev"));
+let fileWriter = rt.getStream({
+    filename: "errors.log",
+    frequency: "daily",
+    verbose: true
+});
+
+const skipSuccess = (req: any, res: { statusCode: number; }) => res.statusCode < 400;
+// Error logging
+router.use(morgan('combined', {
+    skip: skipSuccess,
+    stream: fileWriter
+}))
+
 /** Parse the request */
 router.use(express.urlencoded({ extended: false }));
 /** Takes care of JSON data */
