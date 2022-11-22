@@ -1,6 +1,7 @@
 # Express API Starter
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 How to use this template:
 
     ![alt text](https://github.com/Leave-it-blank/Express-Starter-with-TypeScript--Node--Redis--DotEnv/documentation/images/howtouse.jpg?raw=true)
@@ -8,7 +9,7 @@ How to use this template:
 Includes API Server utilities:
 
 - [Prisma](https://www.npmjs.com/package/prisma)
-  - ORM utilities for Mysql schema generation
+  - ORM for Mysql schema generation and manupulation
 - [Cron](https://www.npmjs.com/package/node-cron)
   - For Sheduling the jobs to run.
 - [Redis](https://www.npmjs.com/package/redis)
@@ -37,7 +38,7 @@ Development utilities:
 
 - [Docker](https://www.npmjs.com/package/docker)
   - Dockerize the whole application
-- [jest](https://www.npmjs.com/package/jest) 
+- [jest](https://www.npmjs.com/package/jest)
   - Jest is a delightful JavaScript Testing Framework with a focus on simplicity.
 - [supertest](https://www.npmjs.com/package/supertest)
   - HTTP assertions made easy via superagent.
@@ -69,7 +70,6 @@ The code for the microservice is contained in the `source` directory. All of the
 ├── source              <- microservice template
 │   ├── controllers/    <- application controllers for routes <- microservice
 │   ├── server.ts       <- express configuration file
-│   ├── models/         <- code for the bussiness model logic //wip
 │   ├── tests/          <- code for the testing various apis  //wip
 │   └── routes/         <- code for the REST API routes
 ├── tsconfig.json       <- ts setup config
@@ -91,9 +91,17 @@ The User model contains the following fields:
 | email      | String(64) | False    |
 | password   | String(32) | False    |
 | api_key    | String(32) | False    |
+| role       | enum(role) | False    |
 | created_at | DateTime   | auto     |
 | updated_at | DateTime   | auto     |
 | deleted_at | DateTime   | auto     |
+
+Role Enum
+| Name | Optional |
+| ---------- | -------- |
+| USER | default |
+| ADMIN | False |
+| MANAGER | False |
 
 ## Author
 
