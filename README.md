@@ -4,7 +4,8 @@
 
 How to use this template:
 
-    ![Screenshot](documentation/images/howtouse.jpg)
+    <img src="documentation/images/howtouse.jpg"/>
+
 
 Includes API Server utilities:
 
