@@ -4,12 +4,16 @@ import { PrismaClient } from '@prisma/client';
 
 const Redis = require('ioredis');
 const fs = require('fs');
-const accessTokenSecret = process.env.JWTSECRET;
-const refreshTokenSecret = process.env.JWTREFRESH_SECRET;
-const salt = process.env.SALT_PASS; // salt for hashing password
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt")
+
+
+const accessTokenSecret = process.env.JWTSECRET;
+const refreshTokenSecret = process.env.JWTREFRESH_SECRET;
+const salt_env = process.env.SALT;
+
+const salt = typeof (salt_env) === "string" ? salt_env : "saltafa1$@/wfaw"; // salt for hashing password
 
 const ioredis = new Redis({
     host: process.env.REDIS_HOST,
@@ -27,12 +31,12 @@ async function removeCacheAccessToken(refreshToken: String) {
 async function checkCacheAccessToken(refreshToken: String) {
     return await ioredis.sismember("refreshTokens", refreshToken);
 }
-async function hashPassword(plaintextPassword: any) {
+async function hashPassword(plaintextPassword: String) {
     const hash = await bcrypt.hash(plaintextPassword + salt, 10);
     return hash;
 }
 // compare password
-async function comparePassword(plaintextPassword: any, hash: any) {
+async function comparePassword(plaintextPassword: String, hash: String) {
     const result = await bcrypt.compare(plaintextPassword + salt, hash);
     return result;
 }
@@ -50,8 +54,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         })
         verify = await comparePassword(req.body.password, user["password"]);
         if (verify) {
-            const accessToken = jwt.sign({ username: user.username, apikey: user["api_key"] }, accessTokenSecret, { expiresIn: '20m' });
-            const refreshToken = jwt.sign({ username: user.username, apikey: user["api_key"] }, refreshTokenSecret);
+            const accessToken = jwt.sign({ username: user.username, role: user["role"] }, accessTokenSecret, { expiresIn: '20m' });
+            const refreshToken = jwt.sign({ username: user.username, role: user["role"] }, refreshTokenSecret);
             cacheRefreshToken(refreshToken);
 
             return res.status(200).json({
@@ -64,7 +68,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         });
 
     }
-
     main()
         .then(async () => {
             await prisma.$disconnect()
@@ -125,12 +128,12 @@ const refreshToken = async (req: Request, res: Response, next: NextFunction) => 
     if (!await checkCacheAccessToken(token)) {
         return res.sendStatus(403);
     }
-    jwt.verify(token, refreshTokenSecret, (err: any, user: { username: any; api_key: any; }) => {
+    jwt.verify(token, refreshTokenSecret, (err: any, user: { username: String; role: String; }) => {
         if (err) {
             return res.sendStatus(403);
         }
 
-        const accessToken = jwt.sign({ username: user.username, apikey: user.api_key }, accessTokenSecret, { expiresIn: '20m' });
+        const accessToken = jwt.sign({ username: user.username, role: user.role }, accessTokenSecret, { expiresIn: '20m' });
 
         return res.json({
             accessToken
