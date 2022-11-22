@@ -4,7 +4,7 @@
 
 How to use this template:
 
-    ![alt text](https://github.com/Leave-it-blank/Express-Starter-with-TS/documentation/images/howtouse.jpg?raw=true)
+    ![Screenshot](/documentation/images/howtouse.jpg)
 
 Includes API Server utilities:
 
