@@ -16,7 +16,14 @@ model User {
   username   String    @unique
   password   String
   api_key    String    @unique
+  role       Role      @default(USER)
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
+}
+
+enum Role {
+  USER
+  ADMIN
+  MANAGER
 }
