@@ -27,4 +27,9 @@ const fail2 = async (req: Request, res: Response, next: NextFunction) => {
         message: "fail 2"
     });
 };
-export default { test1, test2, fail1, fail2 };
+const home = async (req: Request, res: Response, next: NextFunction) => {
+    return res.status(200).json({
+        message: "home"
+    });
+};
+export default { test1, test2, fail1, fail2, home };
