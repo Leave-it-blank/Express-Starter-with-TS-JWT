@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+  restapi2:
+    image: leaveitblank/node-rest
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      "NODE_ENV": "development"
+    ports:
+      - "${PORT}:${PORT}"
+    networks:
+      - sai
+    links:
+      - mysql
+      - redis
+    env_file: ./.env
+    depends_on:
+     mysql:
+        condition: service_healthy
+    command: "npm run start" 
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  mysql:
+    env_file: ./.env
+    image: mysql:8.0
+    container_name: mysql
+    networks:
+      - sai
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      "MYSQL_DATABASE": "${DB_NAME}"
+      "MYSQL_ROOT_PASSWORD": "${DB_PASSWORD}"
+    volumes:
+      - ./data/db:/var/lib/mysql
+    healthcheck:
+        test: "/usr/bin/mysql --user=root --password=${DB_PASSWORD} --execute \"SHOW DATABASES;\""
+        interval: 2s
+        timeout: 20s
+        retries: 10
+
+
+  redis:
+    env_file: ./.env
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: >
+      --requirepass ${REDIS_PASSWORD}
+
+  migration:
+    env_file: ./.env
+    image: leaveitblank/node-rest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: "prisma migrate dev" 
+    links:
+    - mysql
+    networks:
+      - sai
+    depends_on:
+     mysql:
+        condition: service_healthy
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+networks:
+  sai:
+    driver: bridge
