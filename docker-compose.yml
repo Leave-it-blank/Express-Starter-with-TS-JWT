@@ -51,7 +51,9 @@ services:
     image: redis:alpine
     container_name: redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    networks:
+      - sai
     command: >
       --requirepass ${REDIS_PASSWORD}
 

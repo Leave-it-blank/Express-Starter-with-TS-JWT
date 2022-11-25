@@ -21,15 +21,28 @@ const ioredis = new Redis({
     password: process.env.REDIS_PASSWORD,
 });
 async function cacheRefreshToken(refreshToken: String) {
-    await ioredis.sadd("refreshTokens", refreshToken);
+    try {
+        await ioredis.sadd("refreshTokens", refreshToken);
+    } catch (e) {
+        console.log(e);
+    }
+
 }
 async function removeCacheAccessToken(refreshToken: String) {
-    const d = await ioredis.srem("refreshTokens", refreshToken);
+    try {
+        const d = await ioredis.srem("refreshTokens", refreshToken);
 
-    return d;
+        return d;
+    } catch (e) {
+        console.log(e);
+    }
 }
 async function checkCacheAccessToken(refreshToken: String) {
-    return await ioredis.sismember("refreshTokens", refreshToken);
+    try {
+        return await ioredis.sismember("refreshTokens", refreshToken);
+    } catch (e) {
+        console.log(e);
+    }
 }
 async function hashPassword(plaintextPassword: String) {
     const hash = await bcrypt.hash(plaintextPassword + salt, 10);
