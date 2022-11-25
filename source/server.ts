@@ -8,9 +8,9 @@ const cors = require('cors')
 const rt = require("file-stream-rotator")
 // @ts-ignore
 const fs = require('fs');
-const jwt = require("jsonwebtoken");
+
 const router: Express = express();
-//security headers
+//security headers 
 router.use(helmet());
 //cross orgin resource sharing
 router.use(cors());
