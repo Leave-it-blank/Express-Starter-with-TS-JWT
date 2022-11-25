@@ -26,7 +26,6 @@ async function cacheRefreshToken(refreshToken: String) {
     } catch (e) {
         console.log(e);
     }
-
 }
 async function removeCacheAccessToken(refreshToken: String) {
     try {
@@ -36,6 +35,7 @@ async function removeCacheAccessToken(refreshToken: String) {
     } catch (e) {
         console.log(e);
     }
+    return " ";
 }
 async function checkCacheAccessToken(refreshToken: String) {
     try {
@@ -43,6 +43,7 @@ async function checkCacheAccessToken(refreshToken: String) {
     } catch (e) {
         console.log(e);
     }
+    return " ";
 }
 async function hashPassword(plaintextPassword: String) {
     const hash = await bcrypt.hash(plaintextPassword + salt, 10);
@@ -88,7 +89,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         .catch(async (e) => {
             console.error(e)
             await prisma.$disconnect()
-            process.exit(1)
+            return res.status(404).json({
+                message: "User not found."
+            });
+            //process.exit(1)
         })
 
 
@@ -96,10 +100,11 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
     var data: any = {};
+    let response_toUser = "Email or Username aalready registered.";
     data["name"] = req.body.username.toLowerCase();
     data["email"] = req.body.email.toLowerCase();
     data["password"] = await hashPassword(req.body.password);
-    data["api_key"] = crypto.randomBytes(20).toString('hex');
+    data["api_key"] = await crypto.randomBytes(20).toString('hex');
     const prisma = new PrismaClient()
     async function main() {
         const user = await prisma.user.create({
@@ -110,6 +115,10 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
                 api_key: data["api_key"]
             },
         })
+        response_toUser = "User Successfully Created.";
+        return res.status(200).json({
+            message: response_toUser
+        });
     }
 
     main()
@@ -118,14 +127,13 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
         })
         .catch(async (e) => {
             console.error(e)
+
             await prisma.$disconnect()
-            process.exit(1)
+            return res.status(200).json({
+                message: response_toUser
+            });
         })
 
-
-    return res.status(200).json({
-        message: "Registered"
-    });
 };
 
 
