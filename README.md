@@ -101,6 +101,11 @@ Role Enum
 | USER | default |
 | ADMIN | False |
 | MANAGER | False |
+#Note
+
+Run
+npx prisma migrate dev --name init
+After updating database tables (ORM)
 
 ## Author
 
