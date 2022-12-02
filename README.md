@@ -32,11 +32,11 @@ Development utilities:
   - ESLint is a tool for identifying and reporting on patterns found in ECMAScript/JavaScript code.
 - [Typescript](https://www.npmjs.com/package/typescript)
   - For Tightly typing the codebase.
-
-## Work in progress
-
 - [Docker](https://www.npmjs.com/package/docker)
   - Dockerize the whole application
+  
+## Work in progress
+
 - [jest](https://www.npmjs.com/package/jest)
   - Jest is a delightful JavaScript Testing Framework with a focus on simplicity.
 - [supertest](https://www.npmjs.com/package/supertest)
