@@ -3,8 +3,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 How to use this template:
-
-    ![alt text](https://github.com/Leave-it-blank/Express-Starter-with-TypeScript--Node--Redis--DotEnv/documentation/images/howtouse.jpg?raw=true)
+  <img src="https://github.com/Leave-it-blank/Express-Starter-with-TS/blob/master/documentation/images/howtouse.jpg"/>
 
 Includes API Server utilities:
 
@@ -33,11 +32,11 @@ Development utilities:
   - ESLint is a tool for identifying and reporting on patterns found in ECMAScript/JavaScript code.
 - [Typescript](https://www.npmjs.com/package/typescript)
   - For Tightly typing the codebase.
-
-## Work in progress
-
 - [Docker](https://www.npmjs.com/package/docker)
   - Dockerize the whole application
+  
+## Work in progress
+
 - [jest](https://www.npmjs.com/package/jest)
   - Jest is a delightful JavaScript Testing Framework with a focus on simplicity.
 - [supertest](https://www.npmjs.com/package/supertest)
@@ -102,6 +101,11 @@ Role Enum
 | USER | default |
 | ADMIN | False |
 | MANAGER | False |
+#Note
+
+Run
+npx prisma migrate dev --name init
+After updating database tables (ORM)
 
 ## Author
 
