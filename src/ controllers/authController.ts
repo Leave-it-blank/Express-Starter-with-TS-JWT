@@ -4,13 +4,18 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { addUser, findUserByEmail } from "../models/User";
 import { addToBlacklist } from "../utils/tokenBlacklist";
+import { Role } from "@prisma/client";
 
 const jwtSecret = process.env.JWT_SECRET || "your-secret-key";
 
-const generateTokens = (user: { id: number; email: string }) => {
-  const accessToken = jwt.sign({ id: user.id, email: user.email }, jwtSecret, {
-    expiresIn: "2d",
-  });
+const generateTokens = (user: { id: number; email: string , role: Role }) => {
+  const accessToken = jwt.sign(
+    { id: user.id, email: user.email, role: Role },
+    jwtSecret,
+    {
+      expiresIn: "2d",
+    }
+  );
 
   return { accessToken };
 };
