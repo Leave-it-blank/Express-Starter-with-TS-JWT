@@ -9,13 +9,14 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role      Role     @default(Subscriber) // Use the Role enum here 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 Int                  @id @default(autoincrement())
+  username           String               @unique
+  email              String               @unique
+  password           String
+  role               Role                 @default(Subscriber) // Use the Role enum here 
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  PasswordResetToken PasswordResetToken[]
 }
 
 model BlacklistedToken {
@@ -29,4 +30,13 @@ enum Role {
   Admin
   Manager
   Subscriber
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
 }

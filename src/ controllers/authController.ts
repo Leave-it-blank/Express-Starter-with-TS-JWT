@@ -2,13 +2,20 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { addUser, findUserByEmail } from "../models/User";
+import {
+  addUser,
+  findUserByEmail,
+  resetPasswordByToken,
+  resetPasswordLink,
+} from "../models/User";
 import { addToBlacklist } from "../utils/tokenBlacklist";
 import { Role } from "@prisma/client";
+import { sendResetPasswordEmail } from "../utils/email";
+import { randomBytes } from "crypto";
 
 const jwtSecret = process.env.JWT_SECRET || "your-secret-key";
 
-const generateTokens = (user: { id: number; email: string , role: Role }) => {
+const generateTokens = (user: { id: number; email: string; role: Role }) => {
   const accessToken = jwt.sign(
     { id: user.id, email: user.email, role: Role },
     jwtSecret,
@@ -65,18 +72,27 @@ export const logout = async (req: Request, res: Response) => {
   res.status(200).json({ message: "Logged out successfully" });
 };
 
-export const forgotPassword = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const forgotPassword = async (req: Request, res: Response) => {
   const { email } = req.body;
+
   const user = await findUserByEmail(email);
 
-  if (!user) {
-    res.status(400).json({ message: "User not found" });
-    return;
-  }
+  if (!user) return res.status(404).json({ message: "User not found" });
 
-  // In a real application, send a reset password email here.
-  res.json({ message: `Password reset link sent to ${email}` });
+  // Generate a password reset token
+  const token = randomBytes(32).toString("hex");
+
+  await resetPasswordLink(token, user);
+  // Send the reset email
+  await sendResetPasswordEmail(email, token);
+
+  res.status(200).json({ message: "Password reset link sent" });
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const { token, newPassword } = req.body;
+
+  const result = await resetPasswordByToken(token, newPassword);
+
+  res.status(200).json({ ...result });
 };
