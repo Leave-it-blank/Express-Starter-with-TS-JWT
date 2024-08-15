@@ -7,7 +7,6 @@ data/
 jspm_packages/
 audit.*
 docker/*
-src/*
 errors.log.*
 # TypeScript v1 declaration files
 typings/
