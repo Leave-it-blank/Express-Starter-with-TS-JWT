@@ -1,26 +1,16 @@
-// Good
 {
-  "compileOnSave": true,
   "compilerOptions": {
-    "sourceMap": true,
-    "outDir": "./built",
-    "allowJs": true,
+    "target": "ES6",
+    "module": "commonjs",  // This is the correct module system for Node.js
     "strict": true,
-    "skipLibCheck": true,
+    "allowJs": false,
     "esModuleInterop": true,
-    "target": "ES2020",
-    "lib": ["esnext"],
-    "allowUnreachableCode": false,
-    "noImplicitReturns": true,
-    "noImplicitAny": true,
-    "typeRoots": ["./typings"],
-    "outFile": "./built/combined.js"
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",  // Specifies the output directory for compiled files
+    "rootDir": "./src" , // Specifies the root directory of input files
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
-  "include": ["./**/*"],
-  "exclude": [
-    "./plugins/**/*",
-    "./typings/**/*",
-    "node_modules",
-    "./built/**/*" // This is what fixed it!
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
