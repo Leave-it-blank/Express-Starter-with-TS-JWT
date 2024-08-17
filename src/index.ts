@@ -7,11 +7,18 @@ import fs from "fs";
 import path from "path";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import helmet from "helmet";
+import cors from "cors"; // Import CORS
 
 dotenv.config();
 
 const app = express();
+
 const port = process.env.PORT || 4000;
+
+// Implemented Security Policy
+app.use(helmet());
+app.use(cors());
 
 // Middleware for logging requests
 // Create a write stream (in append mode) for logging to a file
