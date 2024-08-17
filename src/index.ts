@@ -33,14 +33,14 @@ app.use(morgan("dev")); // Logs to the console in 'dev' format
 // Middleware
 app.use(bodyParser.json());
 
+// default routes
+app.use("/", web);
+
 // authentication routes
 app.use("/auth", auth);
 
 // admin middleware routes
 app.use("/admin", admin);
-
-// default routes
-app.use("/", web);
 
 // Start the server
 app.listen(port, () => {

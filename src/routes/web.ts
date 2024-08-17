@@ -9,12 +9,9 @@ import { home } from "../ controllers/homeController";
 
 const router = Router();
 
- 
 router.get("/profile", isAuthenticated, getUserProfile);
 
- 
 router.put("/profile", isAuthenticated, updateUserProfile);
 
- 
 router.get("/", home);
 export default router;
