@@ -1,11 +1,13 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import auth from "./routes/auth";
+import admin from "./routes/admin";
+import web from "./routes/web";
 import fs from "fs";
 import path from "path";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import { isAuthenticated } from "./middleware/isAuthenticated";
+
 dotenv.config();
 
 const app = express();
@@ -23,16 +25,15 @@ app.use(morgan("dev")); // Logs to the console in 'dev' format
 
 // Middleware
 app.use(bodyParser.json());
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, World!");
-});
 
-app.get("/a", isAuthenticated, (req: Request, res: Response) => {
-  res.send("Hello, World!");
-});
-
-// load routers
+// authentication routes
 app.use("/auth", auth);
+
+// admin middleware routes
+app.use("/admin", admin);
+
+// default routes
+app.use("/", web);
 
 // Start the server
 app.listen(port, () => {

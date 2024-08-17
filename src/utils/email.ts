@@ -1,4 +1,3 @@
-// src/utils/email.ts
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({

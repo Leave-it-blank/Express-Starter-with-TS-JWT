@@ -17,3 +17,8 @@ typings/
 
 # Optional npm cache directory
 .npm
+
+access.log
+
+src/access.log
+/src/access.log
