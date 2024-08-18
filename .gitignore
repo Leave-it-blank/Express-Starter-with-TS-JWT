@@ -2,13 +2,23 @@
 node_modules
 # Dependency directories
 node_modules/
+builds/
+data/
 jspm_packages/
-
+audit.*
+docker/*
+errors.log.*
 # TypeScript v1 declaration files
 typings/
+ 
 
 # TypeScript cache
 *.tsbuildinfo
 
 # Optional npm cache directory
 .npm
+
+access.log
+
+src/access.log
+/src/access.log
